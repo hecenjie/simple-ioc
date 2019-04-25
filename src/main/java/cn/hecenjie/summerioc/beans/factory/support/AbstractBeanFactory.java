@@ -2,6 +2,7 @@ package cn.hecenjie.summerioc.beans.factory.support;
 
 import cn.hecenjie.summerioc.beans.factory.BeanFactory;
 import cn.hecenjie.summerioc.beans.factory.BeansException;
+import cn.hecenjie.summerioc.beans.factory.config.AbstractBeanDefinition;
 import cn.hecenjie.summerioc.beans.factory.config.BeanDefinition;
 
 import java.util.Map;
@@ -16,6 +17,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     /** 当前正在创建的原型模式 */
     private final ThreadLocal<Object> prototypesCurrentlyInCreation = new ThreadLocal<>();
+
+    private ClassLoader beanClassLoader = ClassLoader.getSystemClassLoader();
 
     public Object getBean(String name) throws BeansException {
         return doGetBean(name, null, null, false);
@@ -80,10 +83,32 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 (curVal.equals(beanName) || (curVal instanceof Set && ((Set<?>) curVal).contains(beanName))));	// 相等或包含则返回true
     }
 
+    protected Class<?> resolveBeanClass(final AbstractBeanDefinition bd, String beanName) throws ClassNotFoundException {
+        if (bd.hasBeanClass()) {
+            return bd.getBeanClass();
+        } else {
+            return doResolveBeanClass(bd);
+        }
+    }
+
+    protected Class<?> doResolveBeanClass(AbstractBeanDefinition bd) throws ClassNotFoundException {
+        String className = bd.getBeanClassName();
+        if (className == null) {
+            throw new BeansException("ClassName must not be null");
+        }
+        Class<?> resolvedClass = Class.forName(className);
+        bd.setBeanClass(resolvedClass);
+        return resolvedClass;
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader;
+    }
+
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 
-    protected abstract Object createBean(String beanName, BeanDefinition bd, Object[] args)
+    protected abstract Object createBean(String beanName, AbstractBeanDefinition bd, Object[] args)
             throws BeansException;
 
 }

@@ -90,6 +90,26 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
         return this.methodOverrides;
     }
 
+    public boolean hasBeanClass() {
+        return (this.beanClass instanceof Class);
+    }
+
+    public void setBeanClass(Object beanClass) {
+        this.beanClass = beanClass;
+    }
+
+    public Class<?> getBeanClass() throws IllegalStateException {
+        Object beanClassObject = this.beanClass;
+        if (beanClassObject == null) {
+            throw new IllegalStateException("No bean class specified on bean definition");
+        }
+        if (!(beanClassObject instanceof Class)) {
+            throw new IllegalStateException(
+                    "Bean class name [" + beanClassObject + "] has not been resolved into an actual Class");
+        }
+        return (Class<?>) beanClassObject;
+    }
+
     @Override
     public void setAttribute(String name, Object value) {
         if (value != null) {
@@ -127,9 +147,9 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
         Object beanClassObject = this.beanClass;
         if (beanClassObject instanceof Class) {
             return ((Class<?>) beanClassObject).getName();
-        }
-        else {
+        } else {
             return (String) beanClassObject;
         }
     }
+
 }

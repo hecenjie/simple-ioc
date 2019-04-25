@@ -12,6 +12,8 @@ public interface BeanDefinition extends AttributeAccessor {
 
     String SCOPE_PROTOTYPE = "prototype";
 
+    void setBeanClass(Object beanClass);
+
     void setBeanClassName(String beanClassName);
 
     String getBeanClassName();
