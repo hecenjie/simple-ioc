@@ -16,11 +16,11 @@ public class BeanDefinitionTest {
     public static void main(String[] args) throws IOException {
         ResourceLoader resourceLoader = new FileSystemResourceLoader();
         Resource resource = resourceLoader.getResource("C:\\Users\\canjie\\Desktop\\test.xml");
-        System.out.println(resource.exists());
-        System.out.println(resource.contentLength());
+        System.out.println("XML file exists: " + resource.exists());
+        System.out.println("XML file size: " + resource.contentLength());
         BeanDefinitionRegistry registry = new DefaultListableBeanFactory();
         BeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(registry);
         int cnt = beanDefinitionReader.loadBeanDefinitions(resource);
-        System.out.println(cnt);
+        System.out.println("Bean definitions count: " + cnt);
     }
 }

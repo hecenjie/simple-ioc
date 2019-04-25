@@ -99,8 +99,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
     }
 
     private void preProcessXml(Element root) {
+        // 空实现，交由子类
     }
 
     private void postProcessXml(Element root) {
+        // 空实现，交由子类
     }
 }
