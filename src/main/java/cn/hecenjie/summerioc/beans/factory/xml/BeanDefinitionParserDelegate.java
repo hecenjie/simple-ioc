@@ -69,6 +69,8 @@ public class BeanDefinitionParserDelegate {
     public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, BeanDefinition containingBean) {
         String id = ele.getAttribute(ID_ATTRIBUTE);			// 解析id属性
         String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);	// 解析name属性
+        logger.debug("This <bean/> element's id is '" + id + "'");
+        logger.debug("This <bean/> element's name is '" + nameAttr + "'");
 
         List<String> aliases = new ArrayList<>();
         if (nameAttr != null && nameAttr.length() != 0) {

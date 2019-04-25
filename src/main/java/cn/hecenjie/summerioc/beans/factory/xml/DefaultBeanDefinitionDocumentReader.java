@@ -70,11 +70,18 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
      */
     private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
         if (BEAN_ELEMENT.equals(ele.getNodeName())) {   // 如果是 <bean/> 标签
+            logger.debug("A <bean/> element parse begin...");
             BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);   // 委托给 BeanDefinitionParserDelegate 解析
             registerBeanDefinition(bdHolder, this.registry);
         }
     }
 
+    /**
+     * 注册 beanName -> BeanDefinition 以及 alias -> beanName 的映射关系
+     * @param definitionHolder
+     * @param registry
+     * @throws BeansException
+     */
     public static void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
             throws BeansException {
         // 注册 beanName
