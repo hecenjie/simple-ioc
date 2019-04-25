@@ -51,6 +51,18 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
         this.scope = scope;
     }
 
+    public String getScope() {
+        return this.scope;
+    }
+
+    public boolean isSingleton() {
+        return SCOPE_SINGLETON.equals(this.scope);
+    }
+
+    public boolean isPrototype() {
+        return SCOPE_PROTOTYPE.equals(this.scope);
+    }
+
     public void setLazyInit(boolean lazyInit) {
         this.lazyInit = lazyInit;
     }
@@ -109,5 +121,15 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
 
     public void setBeanClassName(String beanClassName) {
         this.beanClass = beanClassName;
+    }
+
+    public String getBeanClassName() {
+        Object beanClassObject = this.beanClass;
+        if (beanClassObject instanceof Class) {
+            return ((Class<?>) beanClassObject).getName();
+        }
+        else {
+            return (String) beanClassObject;
+        }
     }
 }

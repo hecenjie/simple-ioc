@@ -8,4 +8,20 @@ import cn.hecenjie.summerioc.core.AttributeAccessor;
  */
 public interface BeanDefinition extends AttributeAccessor {
 
+    String SCOPE_SINGLETON = "singleton";
+
+    String SCOPE_PROTOTYPE = "prototype";
+
+    void setBeanClassName(String beanClassName);
+
+    String getBeanClassName();
+
+    void setScope(String scope);
+
+    String getScope();
+
+    boolean isSingleton();
+
+    boolean isPrototype();
+
 }

@@ -4,8 +4,8 @@ package cn.hecenjie.summerioc.beans.factory;
  * @author cenjieHo
  * @since 2019/4/25
  */
-public interface BeanFactory {
+public interface ObjectFactory<T> {
 
-    Object getBean(String name) throws BeansException;
+    T getObject() throws BeansException;
 
 }
