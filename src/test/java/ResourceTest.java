@@ -1,5 +1,5 @@
-import cn.hecenjie.summerioc.core.io.FileSystemResource;
-import cn.hecenjie.summerioc.core.io.Resource;
+import cn.hecenjie.simpleioc.core.io.FileSystemResource;
+import cn.hecenjie.simpleioc.core.io.Resource;
 
 import java.io.IOException;
 

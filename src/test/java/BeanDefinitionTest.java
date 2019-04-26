@@ -1,10 +1,10 @@
-import cn.hecenjie.summerioc.beans.factory.support.BeanDefinitionReader;
-import cn.hecenjie.summerioc.beans.factory.support.BeanDefinitionRegistry;
-import cn.hecenjie.summerioc.beans.factory.support.DefaultListableBeanFactory;
-import cn.hecenjie.summerioc.beans.factory.xml.XmlBeanDefinitionReader;
-import cn.hecenjie.summerioc.core.io.FileSystemResourceLoader;
-import cn.hecenjie.summerioc.core.io.Resource;
-import cn.hecenjie.summerioc.core.io.ResourceLoader;
+import cn.hecenjie.simpleioc.beans.factory.support.BeanDefinitionReader;
+import cn.hecenjie.simpleioc.beans.factory.support.BeanDefinitionRegistry;
+import cn.hecenjie.simpleioc.beans.factory.support.DefaultListableBeanFactory;
+import cn.hecenjie.simpleioc.beans.factory.xml.XmlBeanDefinitionReader;
+import cn.hecenjie.simpleioc.core.io.FileSystemResourceLoader;
+import cn.hecenjie.simpleioc.core.io.Resource;
+import cn.hecenjie.simpleioc.core.io.ResourceLoader;
 
 import java.io.IOException;
 

@@ -1,6 +1,6 @@
-import cn.hecenjie.summerioc.core.io.FileSystemResourceLoader;
-import cn.hecenjie.summerioc.core.io.Resource;
-import cn.hecenjie.summerioc.core.io.ResourceLoader;
+import cn.hecenjie.simpleioc.core.io.FileSystemResourceLoader;
+import cn.hecenjie.simpleioc.core.io.Resource;
+import cn.hecenjie.simpleioc.core.io.ResourceLoader;
 
 import java.io.IOException;
 
