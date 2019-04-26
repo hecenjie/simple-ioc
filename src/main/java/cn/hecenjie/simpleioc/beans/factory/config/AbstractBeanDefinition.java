@@ -1,5 +1,6 @@
 package cn.hecenjie.simpleioc.beans.factory.config;
 
+import cn.hecenjie.simpleioc.beans.MutablePropertyValues;
 import cn.hecenjie.simpleioc.beans.factory.support.MethodOverrides;
 
 import java.util.LinkedHashMap;
@@ -24,6 +25,8 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
 
     /** 同样表示按类型自动装配 Bean 属性，只不过指的是构造函数的情况 */
     public static final int AUTOWIRE_CONSTRUCTOR = 3;
+
+    private MutablePropertyValues propertyValues;
 
     private volatile Object beanClass;
 
@@ -110,6 +113,17 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
         return (Class<?>) beanClassObject;
     }
 
+    public boolean hasPropertyValues() {
+        return (this.propertyValues != null && !this.propertyValues.isEmpty());
+    }
+
+    public MutablePropertyValues getPropertyValues() {
+        if (this.propertyValues == null) {
+            this.propertyValues = new MutablePropertyValues();
+        }
+        return this.propertyValues;
+    }
+
     @Override
     public void setAttribute(String name, Object value) {
         if (value != null) {
@@ -150,6 +164,10 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
         } else {
             return (String) beanClassObject;
         }
+    }
+
+    public int getResolvedAutowireMode() {
+        return this.autowireMode;
     }
 
 }

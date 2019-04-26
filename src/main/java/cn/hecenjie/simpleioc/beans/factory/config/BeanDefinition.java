@@ -1,5 +1,6 @@
 package cn.hecenjie.simpleioc.beans.factory.config;
 
+import cn.hecenjie.simpleioc.beans.MutablePropertyValues;
 import cn.hecenjie.simpleioc.core.AttributeAccessor;
 
 /**
@@ -25,5 +26,9 @@ public interface BeanDefinition extends AttributeAccessor {
     boolean isSingleton();
 
     boolean isPrototype();
+
+    boolean hasPropertyValues();
+
+    MutablePropertyValues getPropertyValues();
 
 }

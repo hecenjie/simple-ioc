@@ -1,8 +1,13 @@
 package cn.hecenjie.simpleioc.beans.factory.support;
 
+import cn.hecenjie.simpleioc.beans.MutablePropertyValues;
+import cn.hecenjie.simpleioc.beans.PropertyValues;
 import cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition.AUTOWIRE_BY_NAME;
+import static cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition.AUTOWIRE_BY_TYPE;
 
 /**
  * @author cenjieHo
@@ -57,7 +62,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         // 对 bean 进行填充，将各个属性值注入，其中可能存在依赖于其它 bean 的属性
         // 递归初始那些依赖 bean
-        populateBean(beanName, mbd, instanceWrapper);
+        populateBean(beanName, bd, bean);
         // 调用初始化方法
         exposedObject = initializeBean(beanName, exposedObject, bd);
 
@@ -88,6 +93,32 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     protected InstantiationStrategy getInstantiationStrategy() {
         return this.instantiationStrategy;
+    }
+
+    protected void populateBean(String beanName, AbstractBeanDefinition bd, Object bean) {
+        // 获取 bean 的属性值
+        PropertyValues pvs = (bd.hasPropertyValues() ? bd.getPropertyValues() : null);
+
+        // 根据名称或类型解析依赖，这里不再处理按照构造函数自动装配的模式
+        // 该逻辑只会解析依赖，并不会将解析出的依赖立即注入到 bean 对象中,
+        // 所有的属性值是在 applyPropertyValues 方法中统一被注入到 bean 对象中的
+        int resolvedAutowireMode = bd.getResolvedAutowireMode();
+        if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) {
+            // 将 PropertyValues 封装成 MutablePropertyValues 对象
+            // MutablePropertyValues 允许对属性进行简单的操作，并提供构造函数以支持Map的深度复制和构造
+            MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
+
+            // 根据名称解析依赖
+            if (bd.getResolvedAutowireMode() == AUTOWIRE_BY_NAME) {
+                autowireByName(beanName, bd, bean, newPvs);
+            }
+            // 根据类型解析依赖
+            if (bd.getResolvedAutowireMode() == AUTOWIRE_BY_TYPE) {
+                autowireByType(beanName, bd, bean, newPvs);
+            }
+            pvs = newPvs;
+        }
+
     }
 
 }
