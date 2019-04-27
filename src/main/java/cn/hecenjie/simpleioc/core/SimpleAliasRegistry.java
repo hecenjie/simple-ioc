@@ -58,4 +58,22 @@ public class SimpleAliasRegistry implements AliasRegistry {
         }
         return result.toArray(new String[0]);
     }
+
+    /**
+     * 循环获取 beanName 的过程，例如，别名A指向名称为B的bean则返回B，若别名A指向别名B，别名B指向名称为C的bean，则返回C
+     * @param name
+     * @return
+     */
+    public String canonicalName(String name) {
+        String canonicalName = name;
+        // Handle aliasing...
+        String resolvedName;
+        do {	// 循环，从 aliasMap 中，获取到最终的 beanName
+            resolvedName = this.aliasMap.get(canonicalName);
+            if (resolvedName != null) {
+                canonicalName = resolvedName;
+            }
+        } while (resolvedName != null);
+        return canonicalName;
+    }
 }

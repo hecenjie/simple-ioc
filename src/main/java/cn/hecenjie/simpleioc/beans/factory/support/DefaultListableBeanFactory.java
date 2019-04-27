@@ -2,7 +2,9 @@ package cn.hecenjie.simpleioc.beans.factory.support;
 
 import cn.hecenjie.simpleioc.beans.factory.BeansException;
 import cn.hecenjie.simpleioc.beans.factory.ListableBeanFactory;
+import cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition;
 import cn.hecenjie.simpleioc.beans.factory.config.BeanDefinition;
+import cn.hecenjie.simpleioc.beans.factory.config.BeanReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,14 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     @Override
     public int getBeanDefinitionCount() {
         return this.beanDefinitionMap.size();
+    }
+
+    public BeanDefinition getBeanDefinition(String beanName) {
+        BeanDefinition bd = this.beanDefinitionMap.get(beanName);
+        if (bd == null) {
+            logger.error("No bean named '" + beanName + "' found in " + this);
+        }
+        return bd;
     }
 
 }

@@ -38,6 +38,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
     /** 已经注册的单例缓存 */
     private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
+    /** 保存的是依赖 beanName 之间的映射关系：beanName -> 依赖 beanName 的集合 */
+    private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
+
+    /** 保存的是依赖 beanName 之间的映射关系：依赖 beanName -> beanName 的集合 */
+    private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
+
     @Override
     public void registerSingleton(String beanName, Object singletonObject) {
 
@@ -122,6 +128,26 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
                 addSingleton(beanName, singletonObject);
             }
             return singletonObject;
+        }
+    }
+
+    public void registerDependentBean(String beanName, String dependentBeanName) {
+        String canonicalName = canonicalName(beanName);
+
+        // 添加 <canonicalName, dependentBeanName> 到 dependentBeanMap 中
+        synchronized (this.dependentBeanMap) {
+            Set<String> dependentBeans =
+                    this.dependentBeanMap.computeIfAbsent(canonicalName, k -> new LinkedHashSet<>(8));
+            if (!dependentBeans.add(dependentBeanName)) {
+                return;
+            }
+        }
+
+        // 添加 <dependentBeanName, canonicalName> 到 dependenciesForBeanMap 中
+        synchronized (this.dependenciesForBeanMap) {
+            Set<String> dependenciesForBean =
+                    this.dependenciesForBeanMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>(8));
+            dependenciesForBean.add(canonicalName);
         }
     }
 

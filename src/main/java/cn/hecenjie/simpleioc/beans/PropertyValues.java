@@ -12,4 +12,6 @@ public interface PropertyValues {
 
     boolean isEmpty();
 
+    boolean contains(String propertyName);
+
 }

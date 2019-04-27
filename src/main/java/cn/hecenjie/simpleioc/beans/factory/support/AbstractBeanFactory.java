@@ -3,6 +3,7 @@ package cn.hecenjie.simpleioc.beans.factory.support;
 import cn.hecenjie.simpleioc.beans.factory.BeanFactory;
 import cn.hecenjie.simpleioc.beans.factory.BeansException;
 import cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition;
+import cn.hecenjie.simpleioc.beans.factory.config.BeanDefinition;
 
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         // 这里省略了 FactoryBean 相关的处理，不支持通过 getObject 方法获取 Bean
         String beanName = name;
-        Object bean;
+        Object bean = null;
 
         Object sharedInstance = getSingleton(beanName); // 先从单例缓存中尝试获取
         if (sharedInstance == null || args != null) {   // 如果单例缓存中不存在该 Bean
@@ -45,7 +46,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
             // 这里省略了合并父类 Bean 得到 RootBeanDefinition 的过程
 
-            AbstractBeanDefinition bd = getBeanDefinition(beanName);
+            AbstractBeanDefinition bd = (AbstractBeanDefinition) getBeanDefinition(beanName);
 
             // 这里省略了先处理所依赖的 Bean 的过程，也就是 depends-on 属性
 
@@ -62,15 +63,18 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                         throw ex;
                     }
                 });
+                bean = sharedInstance;  // 省略了FactoryBean相关的操作
             } else if (bd.isPrototype()) {  // 原型模式
                 // 因为原型模式不涉及缓存，所以加载过程比较简单，直接创建一个新的 Bean 实例就可以了。
-
+                // todo: 暂未实现
+                throw new BeansException("Scopes other than singleton and prototype are not supported");
             } else {    // 其它作用域：request、session、global session
                 // 暂不支持，直接抛出异常
                 throw new BeansException("Scopes other than singleton and prototype are not supported");
             }
 
         }
+        return (T) bean;
 
     }
 
@@ -103,7 +107,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
 
-    protected abstract AbstractBeanDefinition getBeanDefinition(String beanName) throws BeansException;
+    protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 
     protected abstract Object createBean(String beanName, AbstractBeanDefinition bd, Object[] args)
             throws BeansException;

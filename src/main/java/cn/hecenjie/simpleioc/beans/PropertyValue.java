@@ -15,6 +15,10 @@ public class PropertyValue implements AttributeAccessor {
 
     private final Object value;
 
+    private boolean converted = false;
+
+    private Object convertedValue;
+
     private final Map<String, Object> attributes = new LinkedHashMap<>();
 
     public PropertyValue(String name, Object value) {
@@ -57,5 +61,18 @@ public class PropertyValue implements AttributeAccessor {
     @Override
     public String[] attributeNames() {
         return this.attributes.keySet().toArray(new String[0]);
+    }
+
+    public synchronized void setConvertedValue(Object value) {
+        this.converted = true;
+        this.convertedValue = value;
+    }
+
+    public synchronized Object getConvertedValue() {
+        return this.convertedValue;
+    }
+
+    public synchronized boolean isConverted() {
+        return this.converted;
     }
 }
