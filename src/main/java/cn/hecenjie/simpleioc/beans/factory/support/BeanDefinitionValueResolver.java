@@ -38,9 +38,8 @@ public class BeanDefinitionValueResolver {
 
     private Object resolveReference(Object argName, RuntimeBeanReference ref) {
         try {
-            Object bean;
             String refName = ref.getBeanName();
-            bean = this.beanFactory.getBean(refName);
+            Object bean = this.beanFactory.getBean(refName);   // 还是使用getBean去获取
             this.beanFactory.registerDependentBean(refName, this.beanName);
             return bean;
         } catch (BeansException ex) {

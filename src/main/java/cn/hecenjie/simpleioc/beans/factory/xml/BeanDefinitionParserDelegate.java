@@ -1,15 +1,15 @@
 package cn.hecenjie.simpleioc.beans.factory.xml;
 
+import cn.hecenjie.simpleioc.beans.PropertyValue;
 import cn.hecenjie.simpleioc.beans.factory.BeansException;
-import cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition;
-import cn.hecenjie.simpleioc.beans.factory.config.BeanDefinition;
-import cn.hecenjie.simpleioc.beans.factory.config.BeanDefinitionHolder;
-import cn.hecenjie.simpleioc.beans.factory.config.GenericBeanDefinition;
+import cn.hecenjie.simpleioc.beans.factory.config.*;
 import cn.hecenjie.simpleioc.beans.factory.support.MethodOverrides;
 import cn.hecenjie.simpleioc.core.AttributeAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +51,13 @@ public class BeanDefinitionParserDelegate {
     public static final String FACTORY_METHOD_ATTRIBUTE = "factory-method";
 
     public static final String FACTORY_BEAN_ATTRIBUTE = "factory-bean";
+
+    public static final String PROPERTY_ELEMENT = "property";
+
+    public static final String REF_ATTRIBUTE = "ref";
+
+    public static final String VALUE_ATTRIBUTE = "value";
+
 
     /** 存储已使用的 beanName 和 alias */
     private final Set<String> usedNames = new HashSet<>();
@@ -241,7 +248,61 @@ public class BeanDefinitionParserDelegate {
     }
 
     public void parsePropertyElements(Element beanEle, BeanDefinition bd) {
-        // 暂未实现
+        NodeList nl = beanEle.getChildNodes();
+        // 遍历<bean>标签下的所有子元素
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element && PROPERTY_ELEMENT.equals(node.getNodeName())) {
+                // 如果该 Node 类型为 Element 且名为 property
+                parsePropertyElement((Element) node, bd);
+            }
+        }
+    }
+
+    public void parsePropertyElement(Element ele, BeanDefinition bd) {
+        String propertyName = ele.getAttribute(NAME_ATTRIBUTE);		// 获取 name 属性值
+        if(propertyName == null || propertyName.length() == 0){
+            logger.error("Element '" + ele.getTagName() + "' is null");
+            return;
+        }
+        if (bd.getPropertyValues().contains(propertyName)) {    // 如果存在相同的 name，报错
+            logger.error("Multiple 'property' definitions for property '" + propertyName + "'");
+            return;
+        }
+        Object val = parsePropertyValue(ele, bd, propertyName);		// 解析属性值
+        PropertyValue pv = new PropertyValue(propertyName, val);	// 创建 PropertyValue 对象
+        bd.getPropertyValues().addPropertyValue(pv);				// 添加到 PropertyValue 集合中
+    }
+
+    public Object parsePropertyValue(Element ele, BeanDefinition bd, String propertyName) {
+        NodeList nl = ele.getChildNodes();
+
+        // 省略了单独的<value>、<ref>、<list>子节点
+
+        boolean hasRefAttribute = ele.hasAttribute(REF_ATTRIBUTE);		// 是否有 ref 属性
+        boolean hasValueAttribute = ele.hasAttribute(VALUE_ATTRIBUTE);	// 是否有 value 属性
+        if (hasRefAttribute && hasValueAttribute) {	// 不允许同时存在 ref 和 value 属性
+            logger.error("<property> element for property '" + propertyName +
+                    "' is only allowed to contain either 'ref' attribute OR 'value' attribute OR sub-element");
+        }
+
+        if (hasRefAttribute) {             // 如果存在 ref 属性
+            String refName = ele.getAttribute(REF_ATTRIBUTE);
+            if(refName == null || refName.length() == 0) {
+                logger.error("<property> element for property '" + propertyName + "' contains empty 'ref' attribute");
+            }
+            // 将 ref 属性值构造为 RuntimeBeanReference 实例对象
+            RuntimeBeanReference ref = new RuntimeBeanReference(refName);
+            return ref;
+        } else if (hasValueAttribute) {    // 如果存在 value 属性
+            String valueHolder = ele.getAttribute(VALUE_ATTRIBUTE);
+            return valueHolder;
+        } else {
+            // Neither child element nor "ref" or "value" attribute found.
+            // 既没发现子元素也没发现ref或value，那么这时候将报错
+            logger.error("<property> element for property '" + propertyName + "' must specify a ref or value");
+            return null;
+        }
     }
 
     public void parseQualifierElements(Element beanEle, AbstractBeanDefinition bd) {

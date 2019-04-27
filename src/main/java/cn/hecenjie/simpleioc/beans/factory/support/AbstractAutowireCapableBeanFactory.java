@@ -167,13 +167,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
             pv.setConvertedValue(convertedValue);
             deepCopy.add(pv);
+        }
 
-            // 进行属性依赖注入，依赖注入真真正正实现在这
-            try {
-                setPropertyValues(new MutablePropertyValues(deepCopy), bean);
-            } catch (Exception ex) {
-                throw new BeansException("Error setting '" + beanName + "' property values", ex);
-            }
+        // 进行属性依赖注入，依赖注入真真正正实现在这
+        try {
+            setPropertyValues(new MutablePropertyValues(deepCopy), bean);
+        } catch (Exception ex) {
+            throw new BeansException("Error setting '" + beanName + "' property values", ex);
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         for (PropertyValue pv : propertyValues) {
             Object propertyName = pv.getName();
             Object convertedValue = pv.getConvertedValue();
-            Field[] fields = bean.getClass().getFields();
+            Field[] fields = bean.getClass().getDeclaredFields();
             for(Field field : fields){  // Spring是使用setter完成注入的，这里直接使用了Field反射注入
                 if(field.getName().equals(propertyName)){
                     field.setAccessible(true); //设置些属性是可以访问的

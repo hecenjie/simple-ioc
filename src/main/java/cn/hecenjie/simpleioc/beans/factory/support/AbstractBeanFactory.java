@@ -73,6 +73,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 throw new BeansException("Scopes other than singleton and prototype are not supported");
             }
 
+        } else{
+            bean = sharedInstance;
         }
         return (T) bean;
 

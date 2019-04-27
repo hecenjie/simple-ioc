@@ -1,4 +1,5 @@
 import beans.First;
+import beans.Second;
 import cn.hecenjie.simpleioc.beans.factory.support.DefaultListableBeanFactory;
 import cn.hecenjie.simpleioc.beans.factory.xml.XmlBeanDefinitionReader;
 import cn.hecenjie.simpleioc.core.io.FileSystemResourceLoader;
@@ -18,7 +19,12 @@ public class GetBeanTest {
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions(resource);
+//        Second s = (Second) factory.getBean("second");
+//        s.sayHello();
         First f = (First) factory.getBean("first");
         f.hello();
+        f.testP1();
+        f.getSecond().sayHello();
+        f.getSecond().sayP();
     }
 }

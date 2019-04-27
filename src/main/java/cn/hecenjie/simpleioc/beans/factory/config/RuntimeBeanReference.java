@@ -16,7 +16,7 @@ public class RuntimeBeanReference implements BeanReference {
 
     @Override
     public String getBeanName() {
-        return null;
+        return this.beanName;
     }
 
     public void setSource(Object source) {
