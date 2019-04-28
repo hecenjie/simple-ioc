@@ -19,12 +19,11 @@ public class GetBeanTest {
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions(resource);
-//        Second s = (Second) factory.getBean("second");
-//        s.sayHello();
+
         First f = (First) factory.getBean("first");
-        f.hello();
-        f.testP1();
-        f.getSecond().sayHello();
-        f.getSecond().sayP();
+        Second s = (Second) factory.getBean("second");
+        f.test();
+        s.test();
+        s.testInt();
     }
 }

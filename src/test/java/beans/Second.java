@@ -5,13 +5,19 @@ package beans;
  * @since 2019/4/27
  */
 public class Second {
-    String p;
+    First first;
+
+    Integer i;
+
+    public void test(){
+        first.sayHello();
+    }
 
     public void sayHello(){
         System.out.println("hello");
     }
 
-    public void sayP(){
-        System.out.println(p);
+    public void testInt(){
+        System.out.println(i);
     }
 }

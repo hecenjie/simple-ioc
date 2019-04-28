@@ -1,19 +1,19 @@
-# summer-ioc
+# simple-ioc
 
 此项目为仿照 Spring 实现的一个简易版的 IoC 容器。
 
-## Resource
+## V0.9版本
 
-该接口定义了对资源的统一抽象。
+- 支持根据指定的路径从文件系统中获取资源
+- 支持XSD模式的XML验证
+- 支持`<property/>`标签以及`value`与`ref`属性（字符串与引用类型的属性注入）
+- 支持单例Bean并解决了单例Bean下的循环依赖问题
 
-目前暂时只实现`FileSystemResource`子类（Spring 提供了`UrlResource`、`ClassPathResource`等更多子类），日后需要扩展.
+## 预期实现
 
-## ResourceLoader
-
-该接口定义了加载资源的统一抽象。
-
-目前暂时只实现了`FileSystemResourceLoader`从文件系统中加载资源（其父类`DefaultResourceLoader`目前也是这么实现的），
-Spring 对此还提供了`ClassRelativeResourceLoader`从给定的class所在包或者所在包的子包下加载资源，`ResourcePatternResolver`支持
-根据指定的资源路径匹配模式每次返回多个`Resource`实例。
-
-## BeanDefinition
+- 扩展资源加载策略，支持类路径与URL形式的资源
+- 提供prototype的Bean
+- 提供简单的类型转换（将`String`转换为`Integer`）
+- 提供`byName`与`byType`方式的自动装配
+- 提供Bean的后置处理
+- 实现`ApplicationContext`体系
