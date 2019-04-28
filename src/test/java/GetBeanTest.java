@@ -24,6 +24,6 @@ public class GetBeanTest {
         Second s = (Second) factory.getBean("second");
         f.test();
         s.test();
-        s.testInt();
+//        s.testInt();
     }
 }

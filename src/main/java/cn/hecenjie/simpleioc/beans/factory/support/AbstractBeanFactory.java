@@ -5,6 +5,7 @@ import cn.hecenjie.simpleioc.beans.factory.BeansException;
 import cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition;
 import cn.hecenjie.simpleioc.beans.factory.config.BeanDefinition;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -36,11 +37,13 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         // 这里省略了 FactoryBean 相关的处理，不支持通过 getObject 方法获取 Bean
         String beanName = name;
-        Object bean = null;
+        Object bean;
 
         Object sharedInstance = getSingleton(beanName); // 先从单例缓存中尝试获取
         if (sharedInstance == null || args != null) {   // 如果单例缓存中不存在该 Bean
-            if (isPrototypeCurrentlyInCreation(beanName)) {	// 当前正在创建的原型bean中包含该beanName，那么直接抛出异常
+
+            if (isPrototypeCurrentlyInCreation(beanName)) {
+                // 因为不解决原型 Bean 的循环依赖，所以当前正在创建的原型bean中包含该beanName，那么直接抛出异常
                 throw new BeansException("Prototype bean '" + beanName + "' currently in creation");
             }
 
@@ -66,8 +69,15 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 bean = sharedInstance;  // 省略了FactoryBean相关的操作
             } else if (bd.isPrototype()) {  // 原型模式
                 // 因为原型模式不涉及缓存，所以加载过程比较简单，直接创建一个新的 Bean 实例就可以了。
-                // todo: 暂未实现
-                throw new BeansException("Scopes other than singleton and prototype are not supported");
+                Object prototypeInstance = null;
+               try {
+                   beforePrototypeCreation(beanName);   // 加载前置处理，就是将其标记为正在创建中
+                   // 创建 Bean 对象
+                   prototypeInstance = createBean(beanName, bd, args);
+               } finally {
+                   afterPrototypeCreation(beanName);    // 加载后置处理，就是移除表示正在创建中的标记
+               }
+                bean = prototypeInstance;  // 省略了FactoryBean相关的操作
             } else {    // 其它作用域：request、session、global session
                 // 暂不支持，直接抛出异常
                 throw new BeansException("Scopes other than singleton and prototype are not supported");
@@ -106,6 +116,40 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     public ClassLoader getBeanClassLoader() {
         return this.beanClassLoader;
+    }
+
+    protected void beforePrototypeCreation(String beanName) {
+        Object curVal = this.prototypesCurrentlyInCreation.get();
+        if (curVal == null) {
+            // 如果为空，那么直接将当前正在创建的加入即可
+            this.prototypesCurrentlyInCreation.set(beanName);
+        } else if (curVal instanceof String) {
+            // 如果不为空，且为String类型，那么说明当前正在创建的原型模式只有一个，
+            // 这时候创建一个集合，将原来的与当前的都加入到集合中去
+            Set<String> beanNameSet = new HashSet<>(2);
+            beanNameSet.add((String) curVal);
+            beanNameSet.add(beanName);
+            this.prototypesCurrentlyInCreation.set(beanNameSet);
+        } else {
+            // 如果不为空，且为set类型，那么说明当前正在创建的原型模式不止一个，直接加入集合即可
+            Set<String> beanNameSet = (Set<String>) curVal;
+            beanNameSet.add(beanName);
+        }
+    }
+
+    protected void afterPrototypeCreation(String beanName) {
+        Object curVal = this.prototypesCurrentlyInCreation.get();
+        if (curVal instanceof String) {
+            // 如果为String，说明当前正在创建的原型模式只有一个，直接移除即可
+            this.prototypesCurrentlyInCreation.remove();
+        } else if (curVal instanceof Set) {
+            // 如果为Set，说明当前正在创建的原型模式有多个，在集合中移除beanName即可
+            Set<String> beanNameSet = (Set<String>) curVal;
+            beanNameSet.remove(beanName);
+            if (beanNameSet.isEmpty()) {
+                this.prototypesCurrentlyInCreation.remove();
+            }
+        }
     }
 
 

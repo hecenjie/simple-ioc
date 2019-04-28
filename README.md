@@ -12,7 +12,7 @@
 ## 预期实现
 
 - 扩展资源加载策略，支持类路径与URL形式的资源
-- 提供prototype的Bean
+- ~~提供prototype的Bean~~
 - 提供简单的类型转换（将`String`转换为`Integer`）
 - 提供`byName`与`byType`方式的自动装配
 - 提供Bean的后置处理
