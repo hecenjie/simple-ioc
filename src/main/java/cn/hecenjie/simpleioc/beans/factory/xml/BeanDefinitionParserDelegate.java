@@ -132,8 +132,8 @@ public class BeanDefinitionParserDelegate {
             // todo：以下许多解析方法并未真正的实现
             parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);	// 解析 bean 的各种属性
             parseMetaElements(ele, bd);		            // 解析元数据 <meta />
-            parseLookupOverrideSubElements(ele, bd.getMethodOverrides());		// 解析 lookup-method 属性 <lookup-method/>
-            parseReplacedMethodSubElements(ele, bd.getMethodOverrides());		// 解析 replaced-method 属性 <replaced-method/>
+            parseLookupOverrideSubElements(ele, bd.getMethodOverrides());		// 解析 lookup-method 子元素 <lookup-method/>
+            parseReplacedMethodSubElements(ele, bd.getMethodOverrides());		// 解析 replaced-method 子元素 <replaced-method/>
             parseConstructorArgElements(ele, bd);		// 解析构造函数参数 <constructor-arg/>
             parsePropertyElements(ele, bd);				// 解析 property 子元素 <property />
             parseQualifierElements(ele, bd);			// 解析 qualifier 子元素 <qualifier />

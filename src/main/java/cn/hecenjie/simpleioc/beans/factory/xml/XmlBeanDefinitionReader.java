@@ -5,6 +5,7 @@ import cn.hecenjie.simpleioc.beans.factory.support.AbstractBeanDefinitionReader;
 import cn.hecenjie.simpleioc.beans.factory.support.BeanDefinitionRegistry;
 import cn.hecenjie.simpleioc.core.io.Resource;
 import cn.hecenjie.simpleioc.core.io.support.EncodedResource;
+import cn.hecenjie.simpleioc.util.xml.SimpleSaxErrorHandler;
 import org.w3c.dom.Document;
 import org.xml.sax.*;
 
@@ -39,10 +40,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
     private DocumentLoader documentLoader = new DefaultDocumentLoader();
 
+    /** 解析时的错误处理 */
+    private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
+
     // todo: 以下这一块还没实现，目前都为null，不过不影响
     private EntityResolver entityResolver;  // 提供自定义如何寻找验证文件的逻辑（默认是从网络上下载）
-    private boolean namespaceAware = false; // 命名空间的支持
-    private ErrorHandler errorHandler;      // 解析时的错误处理，可以获取到哪个元素有错
+    private boolean namespaceAware; // 命名空间的支持
 
 
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
