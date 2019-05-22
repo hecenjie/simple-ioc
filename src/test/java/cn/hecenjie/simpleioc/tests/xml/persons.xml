@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+
+	<bean id="person" class="cn.hecenjie.simpleioc.tests.objects.persons.Person">
+		<property name="name" value="Lihua" />
+		<property name="age" value="18" />
+		<property name="idCard" ref="idCard" />
+	</bean>
+	
+	<bean id="idCard" class="cn.hecenjie.simpleioc.tests.objects.persons.IdCard">
+		<property name="id" value="441301188875468912" />
+		<property name="owner" ref="person" />
+	</bean>
+	
+</beans>
