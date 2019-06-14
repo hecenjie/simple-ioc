@@ -30,6 +30,7 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
 
     private volatile Object beanClass;
 
+    /** 默认为单例 Bean */
     private String scope = "singleton";
 
     private boolean lazyInit = false;

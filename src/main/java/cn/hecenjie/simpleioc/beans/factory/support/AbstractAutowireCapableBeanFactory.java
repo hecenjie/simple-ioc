@@ -6,6 +6,7 @@ import cn.hecenjie.simpleioc.beans.PropertyValues;
 import cn.hecenjie.simpleioc.beans.factory.BeansException;
 import cn.hecenjie.simpleioc.beans.factory.config.AbstractBeanDefinition;
 import cn.hecenjie.simpleioc.beans.factory.config.BeanDefinition;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,10 +161,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             // 对于 int 类型的配置，这里并未做转换，所以还是字符串,
             // 除了解析上面几种类型，该方法还会解析 <set/>、<map/>、<array/> 等集合配置
             Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
-            Object convertedValue = resolvedValue;	// 转换之后的属性值
 
-            // todo: 对属性值的类型进行转换，比如将 String 类型的属性值"123"转换为 Integer 类型的 123
-//          convertedValue = convertForProperty(resolvedValue, propertyName, bw, converter);
+            // 对属性值的类型进行转换，比如将 String 类型的属性值 "123" 转换为 Integer 类型的 123
+            Object convertedValue = convertForProperty(resolvedValue, propertyName, bean);
 
             pv.setConvertedValue(convertedValue);
             deepCopy.add(pv);
@@ -175,6 +175,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         } catch (Exception ex) {
             throw new BeansException("Error setting '" + beanName + "' property values", ex);
         }
+    }
+
+    protected Object convertForProperty(Object resolvedValue, String propertyName, Object bean){
+        if(resolvedValue instanceof String){
+            try {
+                Field field = bean.getClass().getDeclaredField(propertyName);
+                resolvedValue = ConvertUtils.convert(resolvedValue, field.getType());
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        }
+        return resolvedValue;
     }
 
     public void setPropertyValues(PropertyValues pvs, Object bean) throws IllegalAccessException {
