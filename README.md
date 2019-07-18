@@ -17,6 +17,12 @@
 - [注册BeanDefinition](http://hecenjie.cn/2019/05/19/Simple-IoC%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97%EF%BC%9ABeanDefinition%E5%8A%A0%E8%BD%BD/)
 - [Bean的加载](http://hecenjie.cn/2019/05/21/Simple-IoC%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97%EF%BC%9AgetBean/)
 
+## TODO
+
+- 扩展资源加载策略，如支持类路径与URL形式的资源
+- 提供`byName`与`byType`方式的自动装配，以及`@Autowired`注解
+- 实现`ApplicationContext`体系
+
 ## Quick start
 
 第一个测试是模拟登陆接口的场景，分为`Controller`、`Service`、`Dao`三层，XML配置文件如下：
@@ -93,8 +99,3 @@
     }
 ```
 
-## TODO
-
-- 扩展资源加载策略，如支持类路径与URL形式的资源
-- 提供`byName`与`byType`方式的自动装配，以及`@Autowired`注解
-- 实现`ApplicationContext`体系
